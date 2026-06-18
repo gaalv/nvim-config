@@ -1,15 +1,22 @@
-local jdtls = require 'jdtls'
+local ok, jdtls = pcall(require, 'jdtls')
+if not ok then return end
+
+local mason_registry = require 'mason-registry'
+
+-- Check if jdtls is installed
+if not mason_registry.is_installed 'jdtls' then
+  vim.notify('jdtls not installed. Run :Mason to install it.', vim.log.levels.WARN)
+  return
+end
 
 -- Workspace directory per project
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
 local workspace_dir = vim.fn.stdpath 'data' .. '/jdtls-workspace/' .. project_name
 
 -- Find jdtls install path via Mason
-local mason_registry = require 'mason-registry'
-
 local jdtls_path = mason_registry.get_package('jdtls'):get_install_path()
 local launcher = vim.fn.glob(jdtls_path .. '/plugins/org.eclipse.equinox.launcher_*.jar')
-local config_dir = jdtls_path .. '/config_mac' -- change to config_linux on Linux
+local config_dir = jdtls_path .. '/config_mac'
 
 -- Extended capabilities for nvim-jdtls
 local extendedClientCapabilities = jdtls.extendedClientCapabilities
@@ -18,16 +25,20 @@ extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
 -- Debug bundles
 local bundles = {}
 
-local java_debug_path = mason_registry.get_package('java-debug-adapter'):get_install_path()
-local java_debug_jar = vim.fn.glob(java_debug_path .. '/extension/server/com.microsoft.java.debug.plugin-*.jar', true)
-if java_debug_jar ~= '' then
-  vim.list_extend(bundles, { java_debug_jar })
+if mason_registry.is_installed 'java-debug-adapter' then
+  local java_debug_path = mason_registry.get_package('java-debug-adapter'):get_install_path()
+  local java_debug_jar = vim.fn.glob(java_debug_path .. '/extension/server/com.microsoft.java.debug.plugin-*.jar', true)
+  if java_debug_jar ~= '' then
+    vim.list_extend(bundles, { java_debug_jar })
+  end
 end
 
-local java_test_path = mason_registry.get_package('java-test'):get_install_path()
-local java_test_jars = vim.split(vim.fn.glob(java_test_path .. '/extension/server/*.jar', true), '\n')
-if java_test_jars[1] ~= '' then
-  vim.list_extend(bundles, java_test_jars)
+if mason_registry.is_installed 'java-test' then
+  local java_test_path = mason_registry.get_package('java-test'):get_install_path()
+  local java_test_jars = vim.split(vim.fn.glob(java_test_path .. '/extension/server/*.jar', true), '\n')
+  if java_test_jars[1] ~= '' then
+    vim.list_extend(bundles, java_test_jars)
+  end
 end
 
 local config = {

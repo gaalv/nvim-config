@@ -4,7 +4,6 @@ return {
     version = '*',
     keys = {
       { '<C-\\>', desc = 'Toggle terminal' },
-      { '<leader>cc', desc = 'Claude Code' },
     },
     opts = {
       size = function(term)
@@ -23,28 +22,6 @@ return {
       },
       shade_terminals = true,
     },
-    config = function(_, opts)
-      require('toggleterm').setup(opts)
-
-      -- Dedicated Claude Code terminal
-      local Terminal = require('toggleterm.terminal').Terminal
-      local claude = Terminal:new {
-        cmd = 'claude',
-        direction = 'float',
-        hidden = true,
-        float_opts = {
-          border = 'rounded',
-          width = function() return math.floor(vim.o.columns * 0.9) end,
-          height = function() return math.floor(vim.o.lines * 0.9) end,
-        },
-        on_open = function(term)
-          -- ESC should not close the terminal (Claude Code uses it)
-          vim.api.nvim_buf_set_keymap(term.bufnr, 't', '<Esc>', '<Esc>', { noremap = true, silent = true })
-        end,
-      }
-
-      vim.keymap.set('n', '<leader>cc', function() claude:toggle() end, { desc = '[C]laude [C]ode' })
-    end,
   },
 }
 
