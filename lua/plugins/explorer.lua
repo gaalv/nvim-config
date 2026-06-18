@@ -13,7 +13,7 @@ return {
             layout = {
               layout = {
                 position = 'left',
-                width = 30,
+                width = 40,
               },
             },
           },
