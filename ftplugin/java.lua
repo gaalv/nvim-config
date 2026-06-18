@@ -1,10 +1,12 @@
 local ok, jdtls = pcall(require, 'jdtls')
 if not ok then return end
 
-local mason_registry = require 'mason-registry'
+-- Mason packages path
+local mason_path = vim.fn.stdpath 'data' .. '/mason/packages'
 
 -- Check if jdtls is installed
-if not mason_registry.is_installed 'jdtls' then
+local jdtls_path = mason_path .. '/jdtls'
+if vim.fn.isdirectory(jdtls_path) == 0 then
   vim.notify('jdtls not installed. Run :Mason to install it.', vim.log.levels.WARN)
   return
 end
@@ -13,8 +15,6 @@ end
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
 local workspace_dir = vim.fn.stdpath 'data' .. '/jdtls-workspace/' .. project_name
 
--- Find jdtls install path via Mason
-local jdtls_path = mason_registry.get_package('jdtls'):get_install_path()
 local launcher = vim.fn.glob(jdtls_path .. '/plugins/org.eclipse.equinox.launcher_*.jar')
 local config_dir = jdtls_path .. '/config_mac'
 
@@ -25,16 +25,16 @@ extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
 -- Debug bundles
 local bundles = {}
 
-if mason_registry.is_installed 'java-debug-adapter' then
-  local java_debug_path = mason_registry.get_package('java-debug-adapter'):get_install_path()
+local java_debug_path = mason_path .. '/java-debug-adapter'
+if vim.fn.isdirectory(java_debug_path) == 1 then
   local java_debug_jar = vim.fn.glob(java_debug_path .. '/extension/server/com.microsoft.java.debug.plugin-*.jar', true)
   if java_debug_jar ~= '' then
     vim.list_extend(bundles, { java_debug_jar })
   end
 end
 
-if mason_registry.is_installed 'java-test' then
-  local java_test_path = mason_registry.get_package('java-test'):get_install_path()
+local java_test_path = mason_path .. '/java-test'
+if vim.fn.isdirectory(java_test_path) == 1 then
   local java_test_jars = vim.split(vim.fn.glob(java_test_path .. '/extension/server/*.jar', true), '\n')
   if java_test_jars[1] ~= '' then
     vim.list_extend(bundles, java_test_jars)
