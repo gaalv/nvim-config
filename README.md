@@ -14,30 +14,53 @@ Modular Neovim configuration for Java, TypeScript/React, Go and agentic coding w
 
 ## Installation
 
+### 1. Clone the repo
+
 ```bash
-# Backup existing config
+# Personal machine
+git clone git@github.com:gaalv/nvim-config.git ~/www/personal/nvim-config
+
+# Work machine (or wherever you keep projects)
+git clone git@github.com:gaalv/nvim-config.git ~/nvim-config
+```
+
+### 2. Backup and symlink
+
+```bash
+# Backup existing config (if any)
 mv ~/.config/nvim ~/.config/nvim.bak
 
-# Symlink
-ln -s ~/www/personal/nvim-config ~/.config/nvim
+# Clear Neovim cache/state from old config
+mv ~/.local/share/nvim ~/.local/share/nvim.bak
+mv ~/.local/state/nvim ~/.local/state/nvim.bak
 
-# Open Neovim — plugins install automatically
+# Symlink — adjust the source path to where you cloned
+ln -s ~/www/personal/nvim-config ~/.config/nvim    # personal
+# OR
+ln -s ~/nvim-config ~/.config/nvim                  # work
+```
+
+### 3. Set machine profile (work only)
+
+Add to your `~/.zshrc`:
+
+```bash
+export NVIM_PROFILE=work
+```
+
+This controls what Mason installs:
+- **work** — installs jdtls, java-debug-adapter, java-test
+- **personal** (default) — installs ts_ls, gopls, prettierd
+
+LSPs are lazy-loaded by filetype regardless of profile. The env var only controls what gets installed.
+
+### 4. Open Neovim
+
+```bash
 nvim
 ```
 
-## Machine profiles
-
-Set `NVIM_PROFILE` in your `.zshrc` to control which tools Mason installs:
-
-```bash
-# Work machine (Java focus)
-export NVIM_PROFILE=work
-
-# Personal machine (default — TS/React/Go)
-# No env var needed
-```
-
-LSPs are lazy-loaded by filetype regardless of profile. The env var only controls what gets installed.
+Plugins install automatically on first launch. Run `:checkhealth` to verify everything is working.
 
 ## Structure
 
