@@ -13,7 +13,7 @@ return {
             layout = {
               layout = {
                 position = 'left',
-                width = 40,
+                width = 100,
               },
             },
             -- Recursively open single-child directories (like VSCode compact folders)
