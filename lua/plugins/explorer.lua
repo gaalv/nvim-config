@@ -1,74 +1,98 @@
 return {
   {
-    'folke/snacks.nvim',
+    'nvim-tree/nvim-tree.lua',
+    version = '*',
     lazy = false,
-    priority = 1000,
-    ---@module 'snacks'
-    ---@type snacks.Config
-    opts = {
-      explorer = { enabled = true },
-      picker = {
-        sources = {
-          explorer = {
-            layout = {
-              layout = {
-                position = 'left',
-                width = 100,
-              },
-            },
-            -- Recursively open single-child directories (like VSCode compact folders)
-            actions = {
-              recursive_toggle = function(picker, item)
-                local Actions = require 'snacks.explorer.actions'
-                local Tree = require 'snacks.explorer.tree'
-
-                local get_children = function(node)
-                  local children = {}
-                  for _, child in pairs(node.children) do
-                    table.insert(children, child)
-                  end
-                  return children
-                end
-
-                local refresh = function() Actions.update(picker, { refresh = true }) end
-
-                ---@param node snacks.picker.explorer.Node
-                local function toggle_recursive(node)
-                  Tree:toggle(node.path)
-                  refresh()
-                  vim.schedule(function()
-                    local children = get_children(node)
-                    if #children ~= 1 then return end
-                    local child = children[1]
-                    if not child.dir then return end
-                    toggle_recursive(child)
-                  end)
-                end
-
-                local node = Tree:node(item.file)
-                if not node then return end
-
-                if node.dir then
-                  toggle_recursive(node)
-                else
-                  picker:action 'confirm'
-                end
-              end,
-            },
-            win = {
-              list = {
-                keys = {
-                  ['<CR>'] = 'recursive_toggle',
-                },
-              },
-            },
-          },
-        },
-      },
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
     },
     keys = {
-      { '<leader>e', function() Snacks.explorer() end, desc = '[E]xplorer' },
+      { '<leader>e', '<cmd>NvimTreeToggle<cr>', desc = '[E]xplorer' },
     },
+    opts = {
+      reload_on_bufenter = true,
+      hijack_cursor = true,
+      hijack_netrw = true,
+      sync_root_with_cwd = true,
+      hijack_unnamed_buffer_when_opening = true,
+      auto_reload_on_write = true,
+      diagnostics = {
+        enable = false,
+      },
+      hijack_directories = {
+        enable = true,
+        auto_open = true,
+      },
+      actions = {
+        open_file = {
+          quit_on_open = true,
+          resize_window = true,
+        },
+      },
+      update_focused_file = {
+        enable = true,
+      },
+      view = {
+        centralize_selection = true,
+        adaptive_size = false,
+        side = 'right',
+        preserve_window_proportions = true,
+        width = 40,
+      },
+      renderer = {
+        full_name = false,
+        indent_markers = {
+          enable = false,
+        },
+        root_folder_label = ':t',
+        highlight_git = true,
+      },
+      filters = {
+        dotfiles = false,
+        git_ignored = false,
+        git_clean = false,
+        no_buffer = false,
+      },
+      git = {
+        enable = true,
+        ignore = false,
+        timeout = 400,
+      },
+    },
+    config = function(_, opts)
+      local nvimtree = require 'nvim-tree'
+
+      local function keybindings(bufnr)
+        local api = require 'nvim-tree.api'
+        local function map(key, fn, desc)
+          vim.keymap.set('n', key, fn, { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true })
+        end
+
+        api.config.mappings.default_on_attach(bufnr)
+
+        map('P', api.node.open.preview, 'Preview')
+        map('s', api.node.open.vertical_no_picker, 'Open Vertical')
+        map('S', api.node.open.horizontal_no_picker, 'Open Horizontal')
+      end
+
+      opts.on_attach = keybindings
+      nvimtree.setup(opts)
+
+      -- Auto open when opening a directory
+      vim.api.nvim_create_autocmd('BufEnter', {
+        group = vim.api.nvim_create_augroup('nvim-tree-open', { clear = true }),
+        callback = function(args)
+          vim.schedule(function()
+            local file = args.file
+            local is_directory = vim.fn.isdirectory(file) == 1
+            if is_directory then
+              vim.cmd.cd(file)
+              require('nvim-tree.api').tree.open()
+            end
+          end)
+        end,
+      })
+    end,
   },
 }
 
