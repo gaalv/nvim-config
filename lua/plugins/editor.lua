@@ -68,18 +68,17 @@ return {
     end,
   },
 
-  -- Colorscheme — Cyberdream
+  -- Colorscheme — Catppuccin Mocha
   {
-    'scottmckendry/cyberdream.nvim',
+    'catppuccin/nvim',
+    name = 'catppuccin',
     lazy = false,
     priority = 1000,
     config = function()
-      require('cyberdream').setup {
-        transparent = false,
-        italic_comments = false,
-        borderless_pickers = true,
+      require('catppuccin').setup {
+        flavour = 'mocha',
       }
-      vim.cmd.colorscheme 'cyberdream'
+      vim.cmd.colorscheme 'catppuccin'
     end,
   },
 }
