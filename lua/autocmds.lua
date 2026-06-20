@@ -5,22 +5,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function() vim.hl.on_yank() end,
 })
 
--- Auto-add missing imports on save for TypeScript
-vim.api.nvim_create_autocmd('BufWritePre', {
-  desc = 'Add missing imports on save (TypeScript)',
-  group = vim.api.nvim_create_augroup('ts-auto-import', { clear = true }),
-  pattern = { '*.ts', '*.tsx' },
-  callback = function()
-    vim.lsp.buf.code_action {
-      apply = true,
-      context = {
-        only = { 'source.addMissingImports.ts' },
-        diagnostics = {},
-      },
-    }
-  end,
-})
-
 -- Diagnostic config
 vim.diagnostic.config {
   update_in_insert = false,

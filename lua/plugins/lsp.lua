@@ -53,9 +53,6 @@ return {
         end,
       })
 
-      -- Profile-based server selection
-      local is_work = vim.env.NVIM_PROFILE == 'work'
-
       ---@type table<string, vim.lsp.Config>
       local servers = {
         lua_ls = {
@@ -76,32 +73,64 @@ return {
               },
             })
           end,
-          ---@type lspconfig.settings.lua_ls
           settings = {
             Lua = { format = { enable = false } },
           },
         },
-      }
 
-      -- Personal: Node/React/Go
-      if not is_work then
-        servers.ts_ls = {}
-        servers.gopls = {}
-      end
+        gopls = {},
+
+        -- vtsls instead of ts_ls — better TypeScript support
+        vtsls = {
+          filetypes = {
+            'javascript',
+            'javascriptreact',
+            'javascript.jsx',
+            'typescript',
+            'typescriptreact',
+            'typescript.tsx',
+          },
+          settings = {
+            complete_function_calls = true,
+            vtsls = {
+              enableMoveToFileCodeAction = true,
+              autoUseWorkspaceTsdk = true,
+              experimental = {
+                maxInlayHintLength = 30,
+                completion = {
+                  enableServerSideFuzzyMatch = true,
+                },
+              },
+            },
+            typescript = {
+              updateImportsOnFileMove = { enabled = 'always' },
+              suggest = { completeFunctionCalls = true },
+              inlayHints = {
+                enumMemberValues = { enabled = true },
+                functionLikeReturnTypes = { enabled = true },
+                parameterNames = { enabled = 'literals' },
+                parameterTypes = { enabled = true },
+                propertyDeclarationTypes = { enabled = true },
+                variableTypes = { enabled = false },
+              },
+            },
+          },
+        },
+
+        tailwindcss = {
+          filetypes_exclude = { 'markdown' },
+        },
+      }
 
       -- Tools to install via Mason
       local ensure_installed = vim.tbl_keys(servers)
-      vim.list_extend(ensure_installed, { 'stylua' })
-
-      if is_work then
-        vim.list_extend(ensure_installed, { 'jdtls', 'java-debug-adapter', 'java-test' })
-      else
-        vim.list_extend(ensure_installed, { 'prettierd' })
-      end
+      vim.list_extend(ensure_installed, {
+        'stylua',
+        'prettierd',
+      })
 
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
-      -- Enable servers (jdtls is handled by nvim-jdtls in ftplugin)
       for name, server in pairs(servers) do
         vim.lsp.config(name, server)
         vim.lsp.enable(name)

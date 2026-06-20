@@ -9,7 +9,7 @@ return {
         'bash', 'c', 'diff', 'html', 'css', 'lua', 'luadoc',
         'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc',
         'javascript', 'typescript', 'tsx', 'json', 'yaml',
-        'java', 'go', 'gomod', 'gosum',
+        'go', 'gomod', 'gosum',
       }
       require('nvim-treesitter').install(parsers)
 

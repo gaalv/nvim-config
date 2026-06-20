@@ -2,16 +2,15 @@
 
 ## Project overview
 
-Modular Neovim configuration using lazy.nvim as plugin manager. Supports Java (work), TypeScript/React, Go (personal), and agentic coding with Claude Code.
+Modular Neovim configuration using lazy.nvim as plugin manager. Focused on TypeScript/React, Go, and agentic coding with AI tools. Inspired by Lazar Nikolov's setup.
 
 ## Architecture
 
 - `init.lua` — bootstraps lazy.nvim, loads `options`, `keymaps`, `autocmds`, and all plugins from `lua/plugins/`
 - `lua/options.lua` — vim options (leader key is space, nerd font enabled, 2-space indent)
 - `lua/keymaps.lua` — global keymaps (window navigation, diagnostics, terminal escape)
-- `lua/autocmds.lua` — autocommands (yank highlight, TS auto-import, diagnostics config)
+- `lua/autocmds.lua` — autocommands (yank highlight, diagnostics config)
 - `lua/plugins/*.lua` — each file returns a lazy.nvim plugin spec table
-- `ftplugin/java.lua` — nvim-jdtls config, runs automatically for `.java` files
 
 ## Conventions
 
@@ -19,12 +18,12 @@ Modular Neovim configuration using lazy.nvim as plugin manager. Supports Java (w
 - Keymaps use `<leader>` prefix grouped by feature: `s` (search), `g` (git), `c` (code), `d` (debug), `n` (notes), `t` (toggle)
 - Descriptions follow `[X]keyword` pattern for which-key display
 - Plugins should lazy-load via `event`, `ft`, `cmd`, or `keys` when possible
-- Profile-aware installs use `vim.env.NVIM_PROFILE == 'work'` (set in .zshrc on work machine)
-- Java LSP uses nvim-jdtls (NOT lspconfig) — always configure in `ftplugin/java.lua`
-- Other LSPs go in `lua/plugins/lsp.lua` via the `servers` table
+- LSPs go in `lua/plugins/lsp.lua` via the `servers` table
+- TypeScript uses vtsls (NOT ts_ls)
+- Theme is Catppuccin Mocha — lualine uses catppuccin theme
 - Format with stylua (config in `.stylua.toml`: 2 spaces, 120 col width, single quotes)
 - End every lua file with `-- vim: ts=2 sts=2 sw=2 et`
-- macOS only — `ftplugin/java.lua` uses `config_mac`
+- macOS only
 
 ## Adding a new plugin
 
@@ -36,8 +35,7 @@ Modular Neovim configuration using lazy.nvim as plugin manager. Supports Java (w
 ## Adding a new LSP
 
 1. Add to `servers` table in `lua/plugins/lsp.lua`
-2. If profile-specific, wrap in `if not is_work then` / `if is_work then`
-3. Add formatter to `lua/plugins/format.lua` if needed
+2. Add formatter to `lua/plugins/format.lua` if needed
 
 ## Testing changes
 
@@ -63,5 +61,6 @@ nvim
 
 ## Dependencies
 
-- Neovim >= 0.10, Git, Nerd Font, make, Java 17+, Node.js, Go
+- Neovim >= 0.10, Git, Nerd Font, make, Node.js, Go, lazygit
 - Obsidian vault path configured in `lua/plugins/notes.lua`
+- Anthropic API key for avante.nvim: `export ANTHROPIC_API_KEY=...`

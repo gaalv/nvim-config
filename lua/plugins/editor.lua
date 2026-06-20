@@ -34,6 +34,9 @@ return {
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
         { '<leader>c', group = '[C]ode' },
+        { '<leader>g', group = '[G]it' },
+        { '<leader>n', group = '[N]otes' },
+        { '<leader>d', group = '[D]ebug' },
         { 'gr', group = 'LSP Actions', mode = { 'n' } },
       },
     },
@@ -50,7 +53,7 @@ return {
     opts = { signs = false },
   },
 
-  -- Mini.nvim collection
+  -- Mini.nvim collection (without statusline — using lualine)
   {
     'nvim-mini/mini.nvim',
     config = function()
@@ -62,26 +65,20 @@ return {
         n_lines = 500,
       }
       require('mini.surround').setup()
-
-      local statusline = require 'mini.statusline'
-      statusline.setup { use_icons = vim.g.have_nerd_font }
-      ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function() return '%2l:%-2v' end
     end,
   },
 
-  -- Colorscheme
+  -- Colorscheme — Catppuccin Mocha
   {
-    'folke/tokyonight.nvim',
+    'catppuccin/nvim',
+    name = 'catppuccin',
+    lazy = false,
     priority = 1000,
     config = function()
-      ---@diagnostic disable-next-line: missing-fields
-      require('tokyonight').setup {
-        styles = {
-          comments = { italic = false },
-        },
+      require('catppuccin').setup {
+        flavour = 'mocha',
       }
-      vim.cmd.colorscheme 'tokyonight-storm'
+      vim.cmd.colorscheme 'catppuccin'
     end,
   },
 }
