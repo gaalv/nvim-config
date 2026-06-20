@@ -1,7 +1,7 @@
 return {
   {
     'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons', 'catppuccin/nvim' },
+    dependencies = { 'nvim-tree/nvim-web-devicons', 'scottmckendry/cyberdream.nvim' },
     config = function()
       local lualine = require 'lualine'
 
@@ -14,7 +14,7 @@ return {
         options = {
           component_separators = '',
           section_separators = '',
-          theme = 'catppuccin',
+          theme = 'cyberdream',
         },
         sections = {
           lualine_a = {},
@@ -41,14 +41,14 @@ return {
         function() return '' end,
         color = function()
           local mode_color = {
-            n = '#f38ba8',
-            i = '#a6e3a1',
-            v = '#89b4fa',
-            [''] = '#89b4fa',
-            V = '#89b4fa',
-            c = '#cba6f7',
-            R = '#f5c2e7',
-            t = '#f38ba8',
+            n = '#ff6e5e',
+            i = '#5eff6c',
+            v = '#5ea1ff',
+            [''] = '#5ea1ff',
+            V = '#5ea1ff',
+            c = '#bd5eff',
+            R = '#ff5ef1',
+            t = '#ff6e5e',
           }
           return { fg = mode_color[vim.fn.mode()] or '#cdd6f4' }
         end,
